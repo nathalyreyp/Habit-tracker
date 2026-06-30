@@ -1126,10 +1126,12 @@ export default function App() {
   useEffect(() => {
     if (config) localStorage.setItem('bnr_config', JSON.stringify(config));
   }, [config]);
-  
+
   useEffect(() => {
     localStorage.setItem('bnr_habits', JSON.stringify(habits));
-  }, [habits]); {emoji:"⭐",name:"",description:"",areaVida:"✨ Otro",objetivo:"",freqPerWeek:7,quantifiable:false,varName:"",varOptions:[]};
+  }, [habits]);
+
+  const EMPTY_H = {emoji:"⭐",name:"",description:"",areaVida:"✨ Otro",objetivo:"",freqPerWeek:7,quantifiable:false,varName:"",varOptions:[]};
 
   function handleOnboardingDone(data) {
     if (onboardingMode==="palette") { setConfig(prev=>({...prev,palette:data.palette})); }

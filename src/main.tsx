@@ -1,6 +1,6 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import App from './habit-tracker (2).jsx'
+import App from './habit-tracker-final.jsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
