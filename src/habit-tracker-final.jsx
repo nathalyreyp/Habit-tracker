@@ -1138,7 +1138,7 @@ function AccessGate({ onGranted }) {
           <img src={BNR_LOGO_B64} alt="ByNathalyRey" style={{width:80,height:80,borderRadius:"18px",display:"block"}}/>
         </div>
         <div style={{textAlign:"center"}}>
-          <div style={{fontSize:"22px",fontWeight:800,color:"#111827",letterSpacing:"-0.5px",marginBottom:"6px"}}>BNR Habit Tracker</div>
+          <div style={{fontSize:"22px",fontWeight:800,color:"#111827",letterSpacing:"-0.5px",marginBottom:"6px",fontFamily:"system-ui,sans-serif",backgroundImage:"none",WebkitBackgroundClip:"unset",WebkitTextFillColor:"#111827"}}>BNR Habit Tracker</div>
           <div style={{fontSize:"13px",color:"#9CA3AF",lineHeight:"1.6"}}>Ingresa tu código de acceso para continuar</div>
         </div>
         <div style={{width:"100%"}}>
