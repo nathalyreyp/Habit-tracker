@@ -1100,7 +1100,75 @@ function QuantChart({habits, palette:p, selectedMonth}) {
 }
 
 // ─── APP ───────────────────────────────────────────────────────────────────────
+
+// ─── ACCESO ──────────────────────────────────────────────────────────────────
+const SHEETS_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTt5rnep_zyjVdXSk6LqQgff1abq-Ptp-GLNU-Jwlm2VFU0UhRy1JdWOMR36t94673MErcf4Lzl1Lu2/pub?gid=0&single=true&output=csv";
+const ACCESS_KEY = "bnr_access_granted";
+
+function AccessGate({ onGranted }) {
+  const [code, setCode] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [errMsg, setErrMsg] = useState("");
+
+  async function handleSubmit() {
+    if (!code.trim()) return;
+    setLoading(true);
+    setErrMsg("");
+    try {
+      const res = await fetch(SHEETS_URL + "&t=" + Date.now());
+      const text = await res.text();
+      const lines = text.trim().split("\n");
+      const validCode = lines[1]?.trim().replace(/\r/g, "");
+      if (code.trim() === validCode) {
+        localStorage.setItem(ACCESS_KEY, "true");
+        onGranted();
+      } else {
+        setErrMsg("Código incorrecto. Verifica con ByNathalyRey.");
+      }
+    } catch(e) {
+      setErrMsg("Error de conexión. Verifica tu internet.");
+    }
+    setLoading(false);
+  }
+
+  return (
+    <div style={{minHeight:"100vh",background:"#F9FAFB",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"24px"}}>
+      <div style={{width:"100%",maxWidth:"380px",background:"#fff",borderRadius:"24px",padding:"32px",boxShadow:"0 4px 32px rgba(0,0,0,0.10)",display:"flex",flexDirection:"column",alignItems:"center",gap:"18px"}}>
+        <div style={{marginBottom:"4px"}}>
+          <img src={BNR_LOGO_B64} alt="ByNathalyRey" style={{width:80,height:80,borderRadius:"18px",display:"block"}}/>
+        </div>
+        <div style={{textAlign:"center"}}>
+          <div style={{fontSize:"22px",fontWeight:800,color:"#111827",letterSpacing:"-0.5px",marginBottom:"6px"}}>BNR Habit Tracker</div>
+          <div style={{fontSize:"13px",color:"#9CA3AF",lineHeight:"1.6"}}>Ingresa tu código de acceso para continuar</div>
+        </div>
+        <div style={{width:"100%"}}>
+          <input
+            value={code}
+            onChange={e=>setCode(e.target.value)}
+            onKeyDown={e=>e.key==="Enter"&&handleSubmit()}
+            placeholder="Código de acceso..."
+            style={{width:"100%",padding:"13px 16px",borderRadius:"12px",border:"2px solid #E5E7EB",fontSize:"16px",outline:"none",boxSizing:"border-box",textAlign:"center",letterSpacing:"0.1em",fontWeight:600}}
+          />
+          {errMsg && <div style={{color:"#EF4444",fontSize:"12px",marginTop:"8px",textAlign:"center",fontWeight:500}}>{errMsg}</div>}
+        </div>
+        <button
+          onClick={handleSubmit}
+          disabled={loading||!code.trim()}
+          style={{width:"100%",padding:"13px",borderRadius:"12px",border:"none",background:code.trim()&&!loading?"#111827":"#E5E7EB",color:code.trim()&&!loading?"#fff":"#9CA3AF",fontSize:"15px",fontWeight:700,cursor:code.trim()&&!loading?"pointer":"default"}}>
+          {loading?"Verificando...":"Ingresar →"}
+        </button>
+        <div style={{fontSize:"10px",color:"#D1D5DB",textAlign:"center",lineHeight:"1.6"}}>
+          🔒 Desarrollo exclusivo de <b>ByNathalyRey</b><br/>Si no tienes tu código, encuéntralo en tu curso de Hotmart
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function App() {
+  const [accessGranted, setAccessGranted] = useState(() => {
+    return localStorage.getItem(ACCESS_KEY) === "true";
+  });
   const [config, setConfig] = useState(() => {
     try {
       const saved = localStorage.getItem('bnr_config');
@@ -1198,6 +1266,7 @@ export default function App() {
     setShowAddModal(false);
   }
 
+  if (!accessGranted) return <AccessGate onGranted={()=>setAccessGranted(true)}/>;
   if (!config||showOnboarding) return <Onboarding onDone={handleOnboardingDone} initialConfig={onboardingMode==="palette"?config:null}/>;
 
   const p = config.palette;
